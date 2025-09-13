@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://harneetsin.github.io/News/sitemap.xml
+Sitemap: https://www.google.com/search?q=https://harneetsin.github.io/News/sitemap.xml
