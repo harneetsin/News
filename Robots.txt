@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://harneetsin.github.io/News/sitemap.xml
