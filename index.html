@@ -67,6 +67,12 @@
             background: rgba(248, 249, 250, 0.8);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .filters-row {
+            display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
@@ -79,22 +85,37 @@
             flex-wrap: wrap;
         }
 
-        .category-btn {
+        .category-btn, .region-btn {
             padding: 8px 16px;
-            border: 2px solid #667eea;
             background: transparent;
             color: #667eea;
+            border: 2px solid #667eea;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
         }
 
-        .category-btn:hover, .category-btn.active {
+        .category-btn:hover, .region-btn:hover {
+            transform: translateY(-2px);
+            background: #667eea;
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .category-btn.active, .region-btn.active {
             background: #667eea;
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(-2px) scale(1); }
+            100% { transform: translateY(-3px) scale(1.02); }
         }
 
         .refresh-btn {
@@ -105,11 +126,49 @@
             border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
         }
 
         .refresh-btn:hover {
             transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(56, 239, 125, 0.4);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .search-bar input {
+            flex-grow: 1;
+            padding: 8px 15px;
+            border-radius: 25px;
+            border: 2px solid #dee2e6;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-btn {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .search-btn:hover {
+            background-color: #5560b2;
         }
 
         .main-content {
@@ -131,6 +190,7 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             border-left: 4px solid #667eea;
+            cursor: pointer;
         }
 
         .news-item:hover {
@@ -192,6 +252,10 @@
             content: "📢";
             font-size: 3rem;
             margin-bottom: 15px;
+        }
+        
+        .ads-hidden {
+            display: none;
         }
 
         .trending-section {
@@ -317,15 +381,30 @@
         </div>
 
         <div class="news-controls">
-            <div class="category-filter">
-                <button class="category-btn active" data-category="all">All News</button>
-                <button class="category-btn" data-category="technology">Technology</button>
-                <button class="category-btn" data-category="business">Business</button>
-                <button class="category-btn" data-category="health">Health</button>
-                <button class="category-btn" data-category="sports">Sports</button>
-                <button class="category-btn" data-category="entertainment">Entertainment</button>
+            <div class="filters-row">
+                <div class="category-filter">
+                    <button class="category-btn active" data-category="all" aria-label="Show all news">All News</button>
+                    <button class="category-btn" data-category="technology" aria-label="Show technology news">Technology</button>
+                    <button class="category-btn" data-category="business" aria-label="Show business news">Business</button>
+                    <button class="category-btn" data-category="health" aria-label="Show health news">Health</button>
+                    <button class="category-btn" data-category="sports" aria-label="Show sports news">Sports</button>
+                    <button class="category-btn" data-category="entertainment" aria-label="Show entertainment news">Entertainment</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search news..." aria-label="Search news">
+                    <button class="search-btn" onclick="searchNews()" aria-label="Submit search">Search</button>
+                </div>
             </div>
-            <button class="refresh-btn" onclick="refreshNews()">🔄 Refresh News</button>
+            
+            <div class="filters-row">
+                <div class="category-filter">
+                    <button class="region-btn active" data-region="" aria-label="Show world news">World</button>
+                    <button class="region-btn" data-region="gb" aria-label="Show UK news">UK</button>
+                    <button class="region-btn" data-region="us" aria-label="Show US news">US</button>
+                    <button class="region-btn" data-region="in" aria-label="Show Indian news">India</button>
+                </div>
+                <button class="refresh-btn" onclick="refreshNews()" aria-label="Refresh news feed">🔄 Refresh News</button>
+            </div>
         </div>
 
         <div class="main-content">
@@ -338,7 +417,7 @@
 
             <div class="sidebar">
                 <!-- Google AdSense Placeholder 1 -->
-                <div class="ad-placeholder">
+                <div class="ad-placeholder ads-hidden">
                     <div>Google AdSense</div>
                     <div style="font-size: 0.9rem; margin-top: 10px;">Banner Ad (300x250)</div>
                 </div>
@@ -354,7 +433,7 @@
                 </div>
 
                 <!-- Google AdSense Placeholder 2 -->
-                <div class="ad-placeholder" style="min-height: 200px;">
+                <div class="ad-placeholder ads-hidden" style="min-height: 200px;">
                     <div>Google AdSense</div>
                     <div style="font-size: 0.9rem; margin-top: 10px;">Sidebar Ad (300x200)</div>
                 </div>
@@ -371,10 +450,16 @@
     <script>
         let newsData = [];
         let currentCategory = 'all';
+        let currentRegion = '';
         let isLoading = false;
+        
+        // News API configuration
+        const NEWS_API_KEY = "52e31664480a4a47a1bbf59d132404e4";
+        const NEWS_API_ENDPOINT = 'https://newsapi.org/v2/top-headlines';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
         const categoryMapping = {
-            'all': 'general',
+            'all': '',
             'technology': 'technology',
             'business': 'business',
             'health': 'health',
@@ -382,13 +467,11 @@
             'entertainment': 'entertainment'
         };
 
-        const RSS_FEEDS = {
-            'general': 'http://feeds.bbci.co.uk/news/rss.xml',
-            'technology': 'http://feeds.bbci.co.uk/news/technology/rss.xml',
-            'business': 'http://feeds.bbci.co.uk/news/business/rss.xml',
-            'health': 'http://feeds.bbci.co.uk/news/health/rss.xml',
-            'sports': 'http://feeds.bbci.co.uk/news/sports/rss.xml',
-            'entertainment': 'http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'
+        const regionMapping = {
+            'world': '',
+            'us': 'us',
+            'uk': 'gb',
+            'in': 'in'
         };
 
         function showMessageBox(message) {
@@ -401,62 +484,65 @@
             document.getElementById('message-box').classList.remove('show');
         }
 
-        function renderNews() {
+        function renderNews(dataToRender = null) {
             const container = document.getElementById('news-container');
-            const filteredNews = currentCategory === 'all' ? newsData : newsData.filter(item => item.category === currentCategory);
-            
-            if (filteredNews.length === 0) {
-                container.innerHTML = '<div class="loading"><p>No news found for this category.</p></div>';
+            const data = dataToRender || newsData;
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="loading"><p>No news found for this category or search term.</p></div>';
                 return;
             }
 
-            container.innerHTML = filteredNews.map(item => `
+            container.innerHTML = data.map(item => `
                 <div class="news-item">
                     <h3>${item.title}</h3>
                     <p>${item.content}</p>
                     <div class="news-meta">
                         <span class="news-source">${item.source}</span>
-                        <span>${item.time}</span>
+                        <span>${new Date(item.time).toLocaleDateString()}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        async function fetchNewsFromAPI(category = 'general') {
-            const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-            const RSS_URL = RSS_FEEDS[category];
-            const url = `${CORS_PROXY}${encodeURIComponent(RSS_URL)}`;
+        async function fetchNewsFromAPI(category = '', region = '') {
+            const params = new URLSearchParams({
+                apiKey: NEWS_API_KEY
+            });
+            
+            // Add a default parameter if no category or region is selected
+            if (!category && !region) {
+                params.append('language', 'en');
+            } else {
+                if (category) {
+                    params.append('category', category);
+                }
+                if (region) {
+                    params.append('country', region);
+                }
+            }
+            
+            const url = `${CORS_PROXY}${encodeURIComponent(`${NEWS_API_ENDPOINT}?${params.toString()}`)}`;
 
             try {
                 const response = await fetch(url);
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, "text/xml");
-                const items = xmlDoc.querySelectorAll('item');
+                const data = await response.json();
 
-                const newsItems = [];
-                items.forEach(item => {
-                    const title = item.querySelector('title')?.textContent || 'No Title';
-                    const description = item.querySelector('description')?.textContent || 'No Description';
-                    const pubDate = item.querySelector('pubDate')?.textContent || 'Unknown Date';
-                    const source = 'BBC News'; // Hardcoded for this example
-                    
-                    // Simple description cleanup to remove HTML tags and truncate
-                    const cleanDescription = description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
-                    
-                    newsItems.push({
-                        title: title,
-                        content: cleanDescription,
-                        category: category,
-                        source: source,
-                        time: new Date(pubDate).toLocaleDateString()
-                    });
-                });
-                return newsItems;
-
+                if (data.status === 'ok') {
+                    return data.articles.map(article => ({
+                        title: article.title || 'No Title',
+                        content: article.description || 'No Description',
+                        source: article.source.name || 'Unknown Source',
+                        time: article.publishedAt || 'Unknown Date'
+                    }));
+                } else {
+                    console.error("API response error:", data.message);
+                    showMessageBox(`API response error: ${data.message}`);
+                    return [];
+                }
             } catch (error) {
                 console.error("Failed to fetch news:", error);
-                showMessageBox("Failed to fetch news. Please try again later.");
+                showMessageBox("Failed to fetch news. Please check your network connection.");
                 return [];
             }
         }
@@ -469,8 +555,9 @@
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Fetching latest news...</p></div>';
             
             try {
-                const apiCategory = categoryMapping[currentCategory] || 'general';
-                newsData = await fetchNewsFromAPI(apiCategory);
+                const apiCategory = categoryMapping[currentCategory] || '';
+                const apiRegion = regionMapping[currentRegion] || '';
+                newsData = await fetchNewsFromAPI(apiCategory, apiRegion);
                 renderNews();
             } catch (error) {
                 console.error('Error fetching news:', error);
@@ -478,6 +565,15 @@
             } finally {
                 isLoading = false;
             }
+        }
+
+        function searchNews() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredResults = newsData.filter(item => 
+                (item.title && item.title.toLowerCase().includes(searchTerm)) || 
+                (item.content && item.content.toLowerCase().includes(searchTerm))
+            );
+            renderNews(filteredResults);
         }
 
         // Category filter functionality
@@ -489,37 +585,41 @@
                 e.target.classList.add('active');
                 currentCategory = e.target.dataset.category;
                 
-                // Fetch new data for the selected category
-                const container = document.getElementById('news-container');
-                container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
-                
-                try {
-                    const apiCategory = categoryMapping[currentCategory] || 'general';
-                    newsData = await fetchNewsFromAPI(apiCategory);
-                    renderNews();
-                } catch (error) {
-                    console.error('Error fetching category news:', error);
-                    // Show message or fallback
-                    showMessageBox("Failed to fetch category news. Displaying existing data.");
-                    renderNews(); 
-                }
+                await refreshNews();
             });
+        });
+
+        // Region filter functionality
+        document.querySelectorAll('.region-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if (isLoading) return;
+                
+                document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentRegion = e.target.dataset.region;
+
+                // Reset category filter to 'all' when region changes
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+                currentCategory = 'all';
+
+                await refreshNews();
+            });
+        });
+
+        // Event listener for the search input to trigger search on 'Enter' key press
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchNews();
+            }
         });
 
         // Trending items click handler
         document.querySelectorAll('.trending-item').forEach(item => {
             item.addEventListener('click', () => {
                 const searchTerm = item.textContent.toLowerCase();
-                const filteredNews = newsData.filter(news => 
-                    news.title.toLowerCase().includes(searchTerm) ||
-                    news.content.toLowerCase().includes(searchTerm)
-                );
-                
-                if (filteredNews.length > 0) {
-                    renderNews(filteredNews);
-                } else {
-                    showMessageBox(`No news found for "${item.textContent}". Try refreshing or selecting a different category.`);
-                }
+                document.getElementById('searchInput').value = searchTerm;
+                searchNews();
             });
         });
 
