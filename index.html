@@ -212,6 +212,14 @@
             line-height: 1.6;
             margin-bottom: 15px;
         }
+        
+        .news-item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
 
         .news-meta {
             display: flex;
@@ -527,6 +535,7 @@
 
             container.innerHTML = data.map(item => `
                 <div class="news-item">
+                    ${item.urlToImage ? `<img src="${item.urlToImage}" class="news-item-image" onerror="this.onerror=null; this.src='https://placehold.co/600x400/E9ECEF/6C757D?text=Image+Not+Found';">` : ''}
                     <h3>${item.title}</h3>
                     <p>${item.content}</p>
                     <div class="news-meta">
@@ -565,7 +574,8 @@
                         title: article.title || 'No Title',
                         content: article.description || 'No Description',
                         source: article.source.name || 'Unknown Source',
-                        time: article.publishedAt || 'Unknown Date'
+                        time: article.publishedAt || 'Unknown Date',
+                        urlToImage: article.urlToImage || null // Add image URL to data object
                     }));
                 } else {
                     console.error("API response error:", data.message);
