@@ -304,6 +304,11 @@
         .trending-item:last-child {
             border-bottom: none;
         }
+        
+        .trending-item-loading {
+            text-align: center;
+            color: #6c757d;
+        }
 
         .loading {
             text-align: center;
@@ -465,11 +470,10 @@
                 <!-- Trending Section -->
                 <div class="trending-section">
                     <h3>Trending Topics</h3>
-                    <div class="trending-item">Climate Change Summit 2025</div>
-                    <div class="trending-item">AI Technology Breakthroughs</div>
-                    <div class="trending-item">Global Economic Updates</div>
-                    <div class="trending-item">Space Exploration Missions</div>
-                    <div class="trending-item">Renewable Energy Progress</div>
+                    <div class="trending-item-loading">
+                        <div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>
+                        <p style="font-size: 0.8rem; margin-top: 10px;">Loading...</p>
+                    </div>
                 </div>
 
                 <!-- Google AdSense Placeholder 2 -->
@@ -497,6 +501,7 @@
         const NEWS_API_KEY = "52e31664480a4a47a1bbf59d132404e4";
         const NEWS_API_ENDPOINT = 'https://newsapi.org/v2/top-headlines';
         const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        const INDIAN_RSS_FEED = 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms';
 
         const categoryMapping = {
             'all': '',
@@ -545,6 +550,30 @@
                 </div>
             `).join('');
         }
+        
+        function renderTrending(data) {
+            const trendingSection = document.querySelector('.trending-section');
+            const placeholder = document.querySelector('.trending-item-loading');
+            
+            if (placeholder) {
+                placeholder.remove();
+            }
+
+            const listContainer = document.createElement('div');
+            listContainer.className = 'trending-items-list';
+            trendingSection.appendChild(listContainer);
+            
+            data.forEach(item => {
+                const trendingItem = document.createElement('div');
+                trendingItem.className = 'trending-item';
+                trendingItem.textContent = item.title;
+                trendingItem.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = item.title;
+                    searchNews();
+                });
+                listContainer.appendChild(trendingItem);
+            });
+        }
 
         async function fetchNewsFromAPI(category = '', region = '') {
             const params = new URLSearchParams({
@@ -575,7 +604,7 @@
                         content: article.description || 'No Description',
                         source: article.source.name || 'Unknown Source',
                         time: article.publishedAt || 'Unknown Date',
-                        urlToImage: article.urlToImage || null // Add image URL to data object
+                        urlToImage: article.urlToImage || null
                     }));
                 } else {
                     console.error("API response error:", data.message);
@@ -588,6 +617,51 @@
                 return [];
             }
         }
+        
+        async function fetchIndianNewsFromRSS() {
+            const url = `${CORS_PROXY}${encodeURIComponent(INDIAN_RSS_FEED)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data, "text/xml");
+                const items = xmlDoc.querySelectorAll('item');
+
+                const articles = [];
+                items.forEach(item => {
+                    const title = item.querySelector('title').textContent;
+                    const description = item.querySelector('description').textContent;
+                    const pubDate = item.querySelector('pubDate').textContent;
+                    const source = 'The Times of India';
+                    
+                    articles.push({
+                        title: title,
+                        content: description,
+                        source: source,
+                        time: pubDate,
+                        urlToImage: null // RSS feed doesn't provide images easily
+                    });
+                });
+                return articles;
+            } catch (error) {
+                console.error("Failed to fetch Indian news from RSS:", error);
+                showMessageBox("Failed to fetch Indian news. Please check your network connection.");
+                return [];
+            }
+        }
+        
+        async function fetchTrendingTopics() {
+            try {
+                // Fetch general headlines for trending topics
+                const trendingArticles = await fetchNewsFromAPI('', 'us'); // Using US as a default for trending
+                const topHeadlines = trendingArticles.slice(0, 5).map(article => ({
+                    title: article.title
+                }));
+                renderTrending(topHeadlines);
+            } catch (error) {
+                console.error("Failed to fetch trending topics:", error);
+            }
+        }
 
         async function refreshNews() {
             if (isLoading) return;
@@ -597,9 +671,13 @@
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Fetching latest news...</p></div>';
             
             try {
-                const apiCategory = categoryMapping[currentCategory] || '';
-                const apiRegion = regionMapping[currentRegion] || '';
-                newsData = await fetchNewsFromAPI(apiCategory, apiRegion);
+                if (currentRegion === 'in') {
+                    newsData = await fetchIndianNewsFromRSS();
+                } else {
+                    const apiCategory = categoryMapping[currentCategory] || '';
+                    const apiRegion = regionMapping[currentRegion] || '';
+                    newsData = await fetchNewsFromAPI(apiCategory, apiRegion);
+                }
                 renderNews();
             } catch (error) {
                 console.error('Error fetching news:', error);
@@ -656,18 +734,10 @@
             }
         });
 
-        // Trending items click handler
-        document.querySelectorAll('.trending-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const searchTerm = item.textContent.toLowerCase();
-                document.getElementById('searchInput').value = searchTerm;
-                searchNews();
-            });
-        });
-
         // Initialize the page with real data
         async function initializePage() {
             await refreshNews();
+            await fetchTrendingTopics();
         }
 
         // Start loading news immediately
@@ -677,6 +747,7 @@
         setInterval(() => {
             if (!isLoading) {
                 refreshNews();
+                fetchTrendingTopics();
             }
         }, 600000); // 10 minutes
     </script>
