@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily News Hub</title>
+    <!-- SEO: A descriptive meta tag helps search engines understand the page content -->
+    <meta name="description" content="Stay informed with the latest breaking news and trending stories. Filter news by category and region, and search for articles of interest.">
     <style>
         * {
             margin: 0;
@@ -372,6 +374,36 @@
             }
         }
     </style>
+    <!-- SEO: Add schema.org markup to help search engines understand the content -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://your-domain.com/index.html"
+      },
+      "headline": "Daily News Hub - The Latest Breaking News and Trending Stories",
+      "description": "Stay informed with the latest breaking news and trending stories from around the world. Filter news by category and region, and search for articles of interest.",
+      "image": "https://placehold.co/1200x630/5060A0/ffffff?text=Daily+News+Hub",
+      "author": {
+        "@type": "Person",
+        "name": "Your Name/Organization"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Daily News Hub",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://placehold.co/600x60/5060A0/ffffff?text=Logo",
+          "width": 600,
+          "height": 60
+        }
+      },
+      "datePublished": "2025-09-13T12:00:00Z",
+      "dateModified": "2025-09-13T12:00:00Z"
+    }
+    </script>
 </head>
 <body>
     <div class="container">
