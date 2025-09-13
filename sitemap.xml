@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <!-- Main homepage URL -->
     <url>
-        <loc>https://your-domain.com/index.html</loc>
+        <loc>https://harneetsin.github.io/index.html</loc>
         <lastmod>2025-09-13</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
@@ -10,7 +10,7 @@
     
     <!-- Example of a specific category page -->
     <url>
-        <loc>https://your-domain.com/index.html?category=technology</loc>
+        <loc>https://harneetsin.github.io/index.html?category=technology</loc>
         <lastmod>2025-09-13</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
@@ -18,10 +18,11 @@
     
     <!-- Example of a specific region page -->
     <url>
-        <loc>https://your-domain.com/index.html?region=us</loc>
+        <loc>https://harneetsin.github.io/index.html?region=us</loc>
         <lastmod>2025-09-13</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     
 </urlset>
+
